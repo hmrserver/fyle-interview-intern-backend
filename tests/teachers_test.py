@@ -1,3 +1,16 @@
+def test_get_assignments_teacher_forbidden(client, h_forbidden):
+    response = client.get(
+        '/teacher/assignments',
+        headers=h_forbidden
+    )
+
+    assert response.status_code == 403
+
+    data = response.json
+    assert data['error'] == 'FyleError'
+    assert data['message'] == 'requester should be a teacher'
+
+
 def test_get_assignments_teacher_1(client, h_teacher_1):
     response = client.get(
         '/teacher/assignments',
@@ -100,3 +113,24 @@ def test_grade_assignment_draft_assignment(client, h_teacher_1):
     data = response.json
 
     assert data['error'] == 'FyleError'
+
+
+#Test to check for successful grading of assignment
+def test_grade_assignment_success(client, h_teacher_1):
+    """
+    success case: grade an assignment
+    """
+    response = client.post(
+        '/teacher/assignments/grade',
+        headers=h_teacher_1,
+        json={
+            "id": 1,
+            "grade": "A"
+        }
+    )
+
+    assert response.status_code == 200
+    data = response.json['data']
+
+    assert data['grade'] == "A"
+    assert data['state'] == "GRADED"

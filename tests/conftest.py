@@ -1,6 +1,6 @@
 import pytest
 import json
-from tests import app
+from tests import app, db, User
 
 
 @pytest.fixture
@@ -54,3 +54,24 @@ def h_teacher_2():
     }
 
     return headers
+
+
+@pytest.fixture
+def h_forbidden():
+    headers = {
+        'X-Principal': json.dumps({
+            'user_id': 5
+        })
+    }
+
+    return headers
+
+
+@pytest.fixture
+def database():
+    return db
+
+
+@pytest.fixture
+def user_model():
+    return User
